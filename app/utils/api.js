@@ -1,7 +1,7 @@
 // app/utils/api.js
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://13.51.231.112/api/v1";
+  process.env.NEXT_PUBLIC_API_URL || "https://api.zapvault.in/api/v1";
 
 const handleResponse = async (response) => {
   if (!response.ok) {
