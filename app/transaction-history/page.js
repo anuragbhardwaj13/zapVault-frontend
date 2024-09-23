@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import { getTransactions, getAllAccounts } from "../utils/api";
 import { useRouter } from "next/navigation";
@@ -25,7 +24,10 @@ export default function TransactionHistoryPage() {
   const fetchUserData = async () => {
     try {
       const data = await getAllAccounts();
+      // console.log(data.accounts[0].id);
+
       setUserData(data);
+      // console.log(userData);
     } catch (error) {
       console.error("Error fetching user data:", error);
       setError("Failed to fetch user data. Please try again later.");
@@ -34,7 +36,9 @@ export default function TransactionHistoryPage() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await getTransactions(userData.userId, page);
+      // console.log(userData);
+
+      const response = await getTransactions(userData.accounts[0].id, page);
       setTransactions(response.content);
       setTotalPages(response.totalPages);
     } catch (error) {

@@ -82,7 +82,7 @@ export const getCurrentUserId = async () => {
 
 export const getAllAccounts = async () => {
   const response = await authenticatedFetch("/user/all-accounts");
-
+  
   return handleResponse(response);
 };
 
