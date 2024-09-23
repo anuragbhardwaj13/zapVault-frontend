@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getAllAccounts, addMoneyToAccount, sendMoney } from "../utils/api";
 import { useRouter } from "next/navigation";
+import Modal from "../components/Modal";
 
 export default function MakeTransactionPage() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function MakeTransactionPage() {
   const [description, setDescription] = useState("");
   const [recipientAccount, setRecipientAccount] = useState("");
   const [error, setError] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     fetchAccounts();
@@ -38,7 +41,8 @@ export default function MakeTransactionPage() {
     e.preventDefault();
     try {
       await addMoneyToAccount(selectedAccountId, parseFloat(amount));
-      router.push("/home");
+      setSuccessMessage(`Successfully deposited $${amount} to your account.`);
+      setShowSuccessModal(true);
     } catch (error) {
       console.error("Error depositing money:", error);
       setError("Failed to deposit money. Please try again later.");
@@ -54,11 +58,28 @@ export default function MakeTransactionPage() {
         parseFloat(amount),
         description
       );
-      router.push("/home");
+      setSuccessMessage(
+        `Successfully sent $${amount} to account ${recipientAccount}.`
+      );
+      setShowSuccessModal(true);
     } catch (error) {
       console.error("Error sending money:", error);
       setError("Failed to send money. Please try again later.");
     }
+  };
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    setAmount("");
+    setDescription("");
+    setRecipientAccount("");
+    setTransactionType("");
+    router.push("/home");
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("authToken");
+    router.push("/");
   };
 
   if (error) {
@@ -80,10 +101,7 @@ export default function MakeTransactionPage() {
       </div>
     );
   }
-  const handleLogout = () => {
-    sessionStorage.removeItem("authToken");
-    router.push("/");
-  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 p-4">
       <div className="max-w-4xl mx-auto">
@@ -227,6 +245,13 @@ export default function MakeTransactionPage() {
               </button>
             </form>
           )}
+
+          <Modal
+            isOpen={showSuccessModal}
+            onClose={handleCloseSuccessModal}
+            title="Transaction Successful"
+            message={successMessage}
+          />
         </div>
       </div>
     </div>
